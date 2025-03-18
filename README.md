@@ -21,18 +21,18 @@ package main
 
 import (
     "fmt"
-    "github.com/acer-red/randResources"
+    rs "github.com/acer-red/randResources"
 )
 
 func main() {
     // 输出[]byte的base64
-    _ := randResources.NewImage("your_email_or_nickanme").Base64()
+    _ := rs.NewImage("your_email_or_nickanme").Base64()
 
     // 输出为string的base64
-    _ := randResources.NewImage("your_email_or_nickanme").Base64String()
+    _ := rs.NewImage("your_email_or_nickanme").Base64String()
 
     // 输出到本地文件
-    if err := randResources.NewImage("your_email_or_nickanme").Save("your_file_path"); err !=nil{
+    if err := rs.NewImage("your_email_or_nickanme").Save("your_file_path"); err !=nil{
         panic(err)
     }
 }
@@ -47,12 +47,12 @@ package main
 
 import (
     "fmt"
-    "github.com/acer-red/randResources"
+    rs "github.com/acer-red/randResources"
 
 )
 
 func main() {
-    nickname := randResources.Text()
+    nickname := rs.Text()
     fmt.Println(nickname)
 }
 ```
