@@ -25,14 +25,19 @@ import (
 )
 
 func main() {
-    // 输出[]byte的base64
-    _ := rs.NewImage("your_email_or_nickanme").Base64()
+    img,err := rs.NewIBuildImagemage("your_email_or_nickanme")
+    if err !=nil{
+        panic(err)
+    }
 
-    // 输出为string的base64
-    _ := rs.NewImage("your_email_or_nickanme").Base64String()
+    // 输出string的BASE64
+    _ := img.Base64()
+
+    // 输出为[]byte
+    _ := img.Bytes()
 
     // 输出到本地文件
-    if err := rs.NewImage("your_email_or_nickanme").Save("your_file_path"); err !=nil{
+    if err := img.Save("your_file_path"); err !=nil{
         panic(err)
     }
 }

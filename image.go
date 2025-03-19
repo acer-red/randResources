@@ -3,7 +3,9 @@ package randresources
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -15,8 +17,9 @@ import (
 )
 
 type Image struct {
-	value string
-	img   *image.RGBA
+	value  string
+	img    *image.RGBA
+	buffer *bytes.Buffer
 }
 
 func getColorFromHash(hash string) color.RGBA {
@@ -94,22 +97,19 @@ func generateIdenticon(input string) *image.RGBA {
 	return img
 }
 
-func (img *Image) Base64() ([]byte, error) {
-	buffer := new(bytes.Buffer)
-	err := png.Encode(buffer, img.img)
-	if err != nil {
-		return nil, err
+func (img *Image) Base64() string {
+	if img.buffer == nil {
+		return ""
 	}
-	return buffer.Bytes(), nil
+	return base64.StdEncoding.EncodeToString(img.Bytes())
 }
-func (img *Image) Base64String() (string, error) {
-	buffer := new(bytes.Buffer)
-	err := png.Encode(buffer, img.img)
-	if err != nil {
-		return "", err
+func (img *Image) Bytes() []byte {
+	if img.buffer == nil {
+		return nil
 	}
-	return buffer.String(), nil
+	return img.buffer.Bytes()
 }
+
 func (img *Image) Save(path string) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -123,7 +123,7 @@ func (img *Image) Save(path string) error {
 	}
 	return nil
 }
-func NewImage(value string) (Image, error) {
+func BuildImage(value string) (Image, error) {
 	value = strings.TrimSpace(value)
 
 	if value == "" {
@@ -131,6 +131,14 @@ func NewImage(value string) (Image, error) {
 	}
 
 	img := generateIdenticon(value)
+	i := Image{value, img, nil}
 
-	return Image{value, img}, nil
+	i.buffer = new(bytes.Buffer)
+	err := png.Encode(i.buffer, img)
+	if err != nil {
+		fmt.Print(err)
+		return Image{}, err
+	}
+
+	return i, nil
 }
